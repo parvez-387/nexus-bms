@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusBMS | Professional Suite</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --sidebar-width: 260px;
+            --accent-color: #2563eb;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        #main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        .nav-link {
+            color: #64748b;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            margin: 0.2rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link:hover {
+            background-color: #f1f5f9;
+            color: var(--accent-color);
+        }
+
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            #sidebar { left: -var(--sidebar-width); }
+            #main-content { margin-left: 0; }
+            #sidebar.active { left: 0; }
+        }
+
+        /* Custom UI Elements */
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+        }
+
+        .table thead th {
+            background-color: #f8fafc;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            border-top: none;
+        }
+
+        .btn-primary { background-color: var(--accent-color); border: none; }
+        
+        /* View Sections */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="p-4 mb-3 d-flex align-items-center gap-2">
+            <div class="bg-primary text-white rounded p-1 px-2 fw-bold">N</div>
+            <h5 class="mb-0 fw-bold">NexusBMS</h5>
+        </div>
+        <div class="nav flex-column">
+            <a href="#" class="nav-link active" onclick="showView('dashboard')">
+                <i class="fa-solid fa-gauge"></i> Dashboard
+            </a>
+            <a href="#" class="nav-link" onclick="showView('shipments')">
+                <i class="fa-solid fa-ship"></i> Shipments
+            </a>
+            <a href="#" class="nav-link" onclick="showView('inventory')">
+                <i class="fa-solid fa-warehouse"></i> Inventory
+            </a>
+            <a href="#" class="nav-link" onclick="showView('sales')">
+                <i class="fa-solid fa-cart-shopping"></i> Sales
+            </a>
+            <hr class="mx-3 text-muted">
+            <a href="#" class="nav-link" onclick="showView('settings')">
+                <i class="fa-solid fa-gear"></i> Settings
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 sticky-top">
+            <div class="container-fluid">
+                <button class="btn d-lg-none me-2" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h5 id="page-title" class="mb-0 fw-bold">Dashboard</h5>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <span id="sync-status" class="badge bg-success-subtle text-success border border-success">
+                        <i class="fa-solid fa-cloud"></i> Local
+                    </span>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-dark" data-bs-toggle="dropdown">
+                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">A</div>
+                            <span class="fw-medium d-none d-md-block">Admin User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3">
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user me-2"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="p-4 p-md-5">
+            <!-- DASHBOARD VIEW -->
+            <section id="dashboard-view" class="view-section active">
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3">
+                        <div class="card stat-card border-primary">
+                            <p class="text-muted small fw-bold mb-1">TOTAL SALES</p>
+                            <h3 class="fw-bold mb-0" id="stat-sales">৳0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card border-warning">
+                            <p class="text-muted small fw-bold mb-1">OPERATING COSTS</p>
+                            <h3 class="fw-bold mb-0" id="stat-costs">৳0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card border-success">
+                            <p class="text-muted small fw-bold mb-1">NET PROFIT</p>
+                            <h3 class="fw-bold mb-0" id="stat-profit">৳0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stat-card border-info">
+                            <p class="text-muted small fw-bold mb-1">ACTIVE BATCHES</p>
+                            <h3 class="fw-bold mb-0" id="stat-batches">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="fw-bold mb-0">Aggregate Stock Levels</h6>
+                                <button class="btn btn-sm btn-outline-primary" onclick="showView('inventory')">View All</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th class="text-center">Available</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-stock-table"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card p-4">
+                            <h6 class="fw-bold mb-4">Recent Activity</h6>
+                            <div id="activity-list" class="small"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SHIPMENTS VIEW -->
+            <section id="shipments-view" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Batch Records</h4>
+                    <button class="btn btn-primary fw-bold" onclick="openShipmentModal()">
+                        <i class="fa-solid fa-plus me-2"></i> New Shipment
+                    </button>
+                </div>
+                <div class="card p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Batch Name</th>
+                                    <th>Date</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shipment-list-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INVENTORY VIEW -->
+            <section id="inventory-view" class="view-section">
+                <h4 class="fw-bold mb-4">Warehousing Analytics</h4>
+                <div class="card p-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th class="text-center">Total Stock</th>
+                                    <th class="text-center">In Transit</th>
+                                    <th>Health</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SALES VIEW -->
+            <section id="sales-view" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0">Revenue Ledger</h4>
+                    <button class="btn btn-success fw-bold" onclick="alert('Sales form integration pending...')">
+                        <i class="fa-solid fa-receipt me-2"></i> Issue Invoice
+                    </button>
+                </div>
+                <div class="card p-4 text-center">
+                    <i class="fa-solid fa-chart-line fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Sales tracking module is synchronized with local storage.</p>
+                </div>
+            </section>
+
+            <!-- SETTINGS VIEW -->
+            <section id="settings-view" class="view-section">
+                <h4 class="fw-bold mb-4">System Configuration</h4>
+                <div class="card p-4">
+                    <label class="form-label fw-bold small text-muted">Google Apps Script API URL</label>
+                    <div class="input-group mb-3">
+                        <input type="text" id="api-url" class="form-control" placeholder="https://script.google.com/...">
+                        <button class="btn btn-outline-primary" onclick="saveSettings()">Save</button>
+                    </div>
+                    <div class="alert alert-info small">
+                        <i class="fa-solid fa-circle-info me-2"></i> Data is automatically saved to LocalStorage first.
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Shipment Modal -->
+    <div class="modal fade" id="shipmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">New Logistics Batch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold">Batch Reference Name</label>
+                            <input type="text" id="ship-name" class="form-control" placeholder="e.g. Saudi Ramadan Batch">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold">Date</label>
+                            <input type="date" id="ship-date" class="form-control">
+                        </div>
+                        <div class="col-12 mt-4">
+                            <h6 class="fw-bold small border-bottom pb-2">Product Details</h6>
+                            <div id="modal-product-rows"></div>
+                            <button class="btn btn-sm btn-link text-primary p-0 fw-bold" onclick="addModalProductRow()">+ Add Item</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="saveShipment()">Save Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App Engine Logic -->
+    <script>
+        // Initial State
+        let state = {
+            shipments: [],
+            sales: [],
+            stock: [
+                { name: 'Ajwa', available: 1250, threshold: 500 },
+                { name: 'Safawi', available: 840, threshold: 300 },
+                { name: 'Mabroom', available: 620, threshold: 200 }
+            ],
+            activities: [
+                { title: 'System initialized', time: 'Just now' }
+            ],
+            apiUrl: ''
+        };
+
+        const modalRows = document.getElementById('modal-product-rows');
+
+        // Initialize App
+        function init() {
+            const savedData = localStorage.getItem('nexus_bms_v1');
+            if (savedData) state = JSON.parse(savedData);
+            
+            document.getElementById('api-url').value = state.apiUrl || '';
+            renderAll();
+        }
+
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId + '-view').classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const title = viewId.charAt(0).toUpperCase() + viewId.slice(1);
+            document.getElementById('page-title').innerText = title;
+
+            if (window.innerWidth <= 992) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function renderAll() {
+            renderStats();
+            renderDashboardStock();
+            renderActivity();
+            renderShipmentsList();
+            renderInventoryTable();
+            saveData();
+        }
+
+        function renderStats() {
+            const totalSales = state.shipments.reduce((sum, s) => sum + s.total, 0);
+            document.getElementById('stat-sales').innerText = `৳${totalSales.toLocaleString()}`;
+            document.getElementById('stat-batches').innerText = state.shipments.length;
+        }
+
+        function renderDashboardStock() {
+            const tbody = document.getElementById('dashboard-stock-table');
+            tbody.innerHTML = state.stock.map(item => `
+                <tr>
+                    <td class="fw-semibold">${item.name}</td>
+                    <td class="text-center">${item.available} kg</td>
+                    <td>
+                        <span class="status-badge ${item.available < item.threshold ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}">
+                            ${item.available < item.threshold ? 'Low Stock' : 'Optimal'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderActivity() {
+            const list = document.getElementById('activity-list');
+            list.innerHTML = state.activities.map(act => `
+                <div class="mb-3 border-start border-3 ps-3 border-primary-subtle">
+                    <div class="fw-bold">${act.title}</div>
+                    <div class="text-muted text-xs">${act.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderShipmentsList() {
+            const tbody = document.getElementById('shipment-list-table');
+            tbody.innerHTML = state.shipments.map(s => `
+                <tr class="ps-4">
+                    <td class="ps-4 fw-bold text-primary">${s.name}</td>
+                    <td class="text-muted small">${s.date}</td>
+                    <td class="fw-bold">৳${s.total.toLocaleString()}</td>
+                    <td><span class="status-badge bg-info-subtle text-info">${s.status}</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-light" onclick="deleteShipment('${s.id}')">
+                            <i class="fa-solid fa-trash text-danger"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table');
+            tbody.innerHTML = state.stock.map(item => `
+                <tr>
+                    <td class="fw-bold">${item.name}</td>
+                    <td class="text-center font-monospace">${item.available} kg</td>
+                    <td class="text-center">0 kg</td>
+                    <td>
+                        <div class="progress" style="height: 6px; width: 100px;">
+                            <div class="progress-bar ${item.available < item.threshold ? 'bg-danger' : 'bg-success'}" 
+                                 style="width: ${(item.available/2000)*100}%"></div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Logic Functions
+        function openShipmentModal() {
+            document.getElementById('ship-name').value = '';
+            document.getElementById('ship-date').value = new Date().toISOString().split('T')[0];
+            modalRows.innerHTML = '';
+            addModalProductRow();
+            new bootstrap.Modal('#shipmentModal').show();
+        }
+
+        function addModalProductRow() {
+            const div = document.createElement('div');
+            div.className = 'row g-2 mb-2 product-row';
+            div.innerHTML = `
+                <div class="col-6">
+                    <select class="form-select form-select-sm prod-name">
+                        ${state.stock.map(i => `<option>${i.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="col-3">
+                    <input type="number" class="form-control form-control-sm prod-qty" placeholder="Qty">
+                </div>
+                <div class="col-3 text-end">
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `;
+            modalRows.appendChild(div);
+        }
+
+        function saveShipment() {
+            const name = document.getElementById('ship-name').value;
+            const date = document.getElementById('ship-date').value;
+            if (!name) return alert('Enter batch name');
+
+            const rows = document.querySelectorAll('.product-row');
+            let totalBatchVal = 0;
+
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.prod-qty').value) || 0;
+                totalBatchVal += (qty * 800); // Fixed mock rate for logic
+            });
+
+            const newShip = {
+                id: Date.now().toString(),
+                name,
+                date,
+                total: totalBatchVal,
+                status: 'Completed'
+            };
+
+            state.shipments.unshift(newShip);
+            state.activities.unshift({ title: `Shipment Added: ${name}`, time: 'Just now' });
+            bootstrap.Modal.getInstance('#shipmentModal').hide();
+            renderAll();
+        }
+
+        function deleteShipment(id) {
+            if(confirm('Delete this record?')) {
+                state.shipments = state.shipments.filter(s => s.id !== id);
+                renderAll();
+            }
+        }
+
+        function saveSettings() {
+            state.apiUrl = document.getElementById('api-url').value;
+            saveData();
+            alert('Settings saved locally.');
+        }
+
+        function saveData() {
+            localStorage.setItem('nexus_bms_v1', JSON.stringify(state));
+        }
+
+        // Run Init
+        init();
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
