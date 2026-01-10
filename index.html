@@ -1,56 +1,151 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusBMS | Professional Business Suite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style type="text/css">
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
-        
-        /* Loading animation for cloud sync */
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .animate-spin-slow { animation: spin 3s linear infinite; }
-        
-        /* View transitions */
-        .view-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
-  }
-}
-</script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="h-full bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-    <div id="root" class="h-full"></div>
-    <script type="module" src="/index.tsx"></script>
+<body class="bg-light">
+    <!-- Login Screen -->
+    <div id="login-screen" class="d-none">
+        <div class="login-container">
+            <div class="login-card text-center p-5 shadow-lg border-0 rounded-4">
+                <div class="brand-logo mb-4 mx-auto">N</div>
+                <h1 class="h3 fw-bold">NexusBMS</h1>
+                <p class="text-muted mb-4">Authorized Personnel Only</p>
+                <div id="login-error" class="alert alert-danger d-none py-2 px-3 small"></div>
+                <form id="login-form">
+                    <div class="mb-3 text-start">
+                        <label class="small fw-bold text-uppercase tracking-widest text-muted mb-1">Email</label>
+                        <input type="email" id="login-email" class="form-control form-control-lg rounded-3" placeholder="name@company.com" required>
+                    </div>
+                    <div class="mb-4 text-start">
+                        <label class="small fw-bold text-uppercase tracking-widest text-muted mb-1">Security Key</label>
+                        <input type="password" id="login-password" class="form-control form-control-lg rounded-3" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3">AUTHORIZE SESSION</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application UI -->
+    <div id="main-app" class="d-none">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar shadow-sm">
+            <div class="sidebar-header p-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3 overflow-hidden">
+                    <div class="sidebar-logo">N</div>
+                    <span class="fw-bold fs-5 tracking-tight brand-text">NexusBMS</span>
+                </div>
+                <button id="toggle-sidebar" class="btn btn-sm btn-link text-muted p-0 border-0"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            
+            <nav class="sidebar-nav px-3 py-2">
+                <div class="nav-section">
+                    <button class="nav-link active" data-view="dashboard">
+                        <i class="fas fa-th-large me-3"></i><span>Dashboard</span>
+                    </button>
+                </div>
+
+                <div class="nav-section mt-3">
+                    <p class="section-label small fw-bold text-muted px-3 text-uppercase mb-1">Operations</p>
+                    <button class="nav-link" data-bs-toggle="collapse" data-bs-target="#logistics-menu">
+                        <i class="fas fa-ship me-3"></i><span>Logistics</span><i class="fas fa-chevron-down ms-auto small"></i>
+                    </button>
+                    <div class="collapse ps-4" id="logistics-menu">
+                        <button class="nav-link sub-link" data-view="create-shipment"><i class="fas fa-plus me-2"></i>New Order</button>
+                        <button class="nav-link sub-link" data-view="shipments"><i class="fas fa-list me-2"></i>Batch Records</button>
+                    </div>
+
+                    <button class="nav-link" data-bs-toggle="collapse" data-bs-target="#inventory-menu">
+                        <i class="fas fa-boxes me-3"></i><span>Warehousing</span><i class="fas fa-chevron-down ms-auto small"></i>
+                    </button>
+                    <div class="collapse ps-4" id="inventory-menu">
+                        <button class="nav-link sub-link" data-view="create-product"><i class="fas fa-plus me-2"></i>New SKU</button>
+                        <button class="nav-link sub-link" data-view="products"><i class="fas fa-list me-2"></i>SKU Catalog</button>
+                        <button class="nav-link sub-link" data-view="inventory"><i class="fas fa-warehouse me-2"></i>Live Stock</button>
+                    </div>
+
+                    <button class="nav-link" data-bs-toggle="collapse" data-bs-target="#transit-menu">
+                        <i class="fas fa-exchange-alt me-3"></i><span>Transit</span><i class="fas fa-chevron-down ms-auto small"></i>
+                    </button>
+                    <div class="collapse ps-4" id="transit-menu">
+                        <button class="nav-link sub-link" data-view="create-transfer"><i class="fas fa-plus me-2"></i>Move Stock</button>
+                        <button class="nav-link sub-link" data-view="transfers"><i class="fas fa-list me-2"></i>Transit Logs</button>
+                    </div>
+                </div>
+
+                <div class="nav-section mt-3">
+                    <p class="section-label small fw-bold text-muted px-3 text-uppercase mb-1">Financials</p>
+                    <button class="nav-link" data-bs-toggle="collapse" data-bs-target="#revenue-menu">
+                        <i class="fas fa-chart-line me-3"></i><span>Revenue</span><i class="fas fa-chevron-down ms-auto small"></i>
+                    </button>
+                    <div class="collapse ps-4" id="revenue-menu">
+                        <button class="nav-link sub-link" data-view="create-sale"><i class="fas fa-plus me-2"></i>Issue Invoice</button>
+                        <button class="nav-link sub-link" data-view="sales"><i class="fas fa-list me-2"></i>Sales Ledger</button>
+                    </div>
+
+                    <button class="nav-link" data-bs-toggle="collapse" data-bs-target="#expense-menu">
+                        <i class="fas fa-receipt me-3"></i><span>Expenses</span><i class="fas fa-chevron-down ms-auto small"></i>
+                    </button>
+                    <div class="collapse ps-4" id="expense-menu">
+                        <button class="nav-link sub-link" data-view="create-expense"><i class="fas fa-plus me-2"></i>Record Cost</button>
+                        <button class="nav-link sub-link" data-view="expenses"><i class="fas fa-list me-2"></i>Expense Log</button>
+                    </div>
+                </div>
+
+                <div class="nav-section mt-auto border-top pt-2">
+                    <button class="nav-link" data-view="reports"><i class="fas fa-file-contract me-3"></i><span>Hub Analysis</span></button>
+                    <button class="nav-link" data-view="users"><i class="fas fa-users-cog me-3"></i><span>Identity</span></button>
+                    <button class="nav-link" data-view="settings"><i class="fas fa-cog me-3"></i><span>System Settings</span></button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="content-area" class="main-content">
+            <!-- Navbar -->
+            <header class="navbar-sticky d-flex align-items-center justify-content-between px-4">
+                <div class="d-flex align-items-center gap-3">
+                    <button id="mobile-sidebar-toggle" class="btn d-lg-none text-muted"><i class="fas fa-bars"></i></button>
+                    <div>
+                        <h2 id="view-title" class="h5 fw-bold mb-0 text-dark">Dashboard Overview</h2>
+                        <div class="d-flex align-items-center gap-2 small">
+                            <span id="sync-indicator" class="sync-pill"><i class="fas fa-cloud me-1"></i> <span>Synced</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navbar-actions d-flex align-items-center gap-3">
+                    <button id="theme-toggle" class="btn btn-link text-muted"><i class="fas fa-moon"></i></button>
+                    <div class="v-divider"></div>
+                    <div class="user-profile d-flex align-items-center gap-2">
+                        <div class="text-end d-none d-md-block">
+                            <p id="nav-user-name" class="fw-bold mb-0 small">Super Admin</p>
+                            <p id="nav-user-role" class="text-muted mb-0 extra-small text-uppercase tracking-widest">Administrator</p>
+                        </div>
+                        <button id="logout-btn" class="btn btn-link text-muted hover-red"><i class="fas fa-sign-out-alt"></i></button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Viewport -->
+            <div id="viewport" class="p-4 animate-fade-in">
+                <!-- Views will be injected here by app.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
