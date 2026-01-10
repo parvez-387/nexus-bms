@@ -1,0 +1,9 @@
+
+{
+  "name": "NexusBMS",
+  "description": "Professional Business Management Suite",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
