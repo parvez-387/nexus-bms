@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusBMS | Professional Suite</title>
+    <title>NexusBMS | Professional Enterprise Suite</title>
     
-    <!-- External Dependencies -->
+    <!-- Professional Assets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
+            --nexus-blue: #2563eb;
+            --nexus-dark: #0f172a;
+            --nexus-bg: #f8fafc;
             --sidebar-width: 280px;
-            --primary-blue: #2563eb;
-            --bg-light: #f8fafc;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-light);
+            background-color: var(--nexus-bg);
             color: #1e293b;
             overflow-x: hidden;
         }
 
-        /* --- Sidebar & Navigation --- */
+        /* --- Sidebar Navigation --- */
         #sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -35,10 +36,13 @@
             top: 0;
             background: #ffffff;
             border-right: 1px solid #e2e8f0;
-            z-index: 1000;
+            z-index: 1050;
             transition: var(--transition);
             overflow-y: auto;
+            scrollbar-width: none;
         }
+
+        #sidebar::-webkit-scrollbar { display: none; }
 
         #main-content {
             margin-left: var(--sidebar-width);
@@ -47,20 +51,20 @@
         }
 
         .nav-category {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 800;
             text-transform: uppercase;
             color: #94a3b8;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             padding: 1.5rem 1.5rem 0.5rem;
         }
 
         .nav-link {
             color: #64748b;
             font-weight: 500;
-            padding: 0.7rem 1.2rem;
-            border-radius: 0.5rem;
-            margin: 0.1rem 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            margin: 0.15rem 1rem;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -70,39 +74,40 @@
 
         .nav-link:hover {
             background-color: #f1f5f9;
-            color: var(--primary-blue);
+            color: var(--nexus-blue);
         }
 
         .nav-link.active {
             background-color: #eff6ff;
-            color: var(--primary-blue);
+            color: var(--nexus-blue);
             font-weight: 700;
+            box-shadow: inset 0 0 0 1px #dbeafe;
         }
 
         .submenu {
-            padding-left: 2.5rem;
+            padding-left: 2.8rem;
             display: none;
+            overflow: hidden;
+            transition: var(--transition);
         }
 
-        .nav-item.expanded .submenu {
-            display: block;
-        }
+        .nav-item.expanded .submenu { display: block; }
+        .nav-item.expanded .chevron { transform: rotate(180deg); }
 
-        .nav-item.expanded .chevron {
-            transform: rotate(180deg);
-        }
-
-        /* --- Components --- */
+        /* --- Global Components --- */
         .card {
             border: none;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             box-shadow: var(--card-shadow);
             margin-bottom: 1.5rem;
+            transition: var(--transition);
         }
+
+        .card:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
 
         .stat-card {
             padding: 1.5rem;
-            border-left: 4px solid var(--primary-blue);
+            border-left: 5px solid var(--nexus-blue);
             background: white;
         }
 
@@ -110,22 +115,47 @@
             font-size: 0.65rem;
             font-weight: 800;
             text-transform: uppercase;
-            padding: 0.35rem 0.8rem;
+            padding: 0.4rem 0.9rem;
             border-radius: 2rem;
             letter-spacing: 0.05em;
         }
 
-        .btn-primary { background-color: var(--primary-blue); border: none; font-weight: 600; padding: 0.6rem 1.5rem; border-radius: 0.6rem; }
+        .btn-nexus {
+            background-color: var(--nexus-blue);
+            color: white;
+            border: none;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.8rem;
+            transition: var(--transition);
+        }
 
-        /* --- View Management --- */
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
-        .view-section.active { display: block; }
+        .btn-nexus:hover { background-color: #1d4ed8; color: white; transform: scale(1.02); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        /* --- View System --- */
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: viewFadeIn 0.4s ease-out; }
+
+        @keyframes viewFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- Table Styling --- */
+        .table thead th {
+            background: #f8fafc;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #64748b;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border: none;
+        }
+
+        .table tbody td { padding: 1rem; border-bottom: 1px solid #f1f5f9; }
+
+        /* Mobile Adjustments */
         @media (max-width: 992px) {
             #sidebar { left: -var(--sidebar-width); }
             #main-content { margin-left: 0; }
@@ -135,65 +165,64 @@
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.1"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Navigation -->
     <nav id="sidebar">
-        <div class="p-4 mb-3 d-flex align-items-center gap-3">
-            <div class="bg-primary text-white rounded-lg p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                <i class="fa-solid fa-layer-group"></i>
-            </div>
-            <h5 class="mb-0 fw-bold tracking-tight">NexusBMS</h5>
+        <div class="p-4 mb-3 d-flex align-items-center gap-3 border-bottom">
+            <div class="bg-primary text-white rounded-lg p-2 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; font-weight: 900;">N</div>
+            <h5 class="mb-0 fw-bold tracking-tight">Nexus<span class="text-primary">BMS</span></h5>
         </div>
 
-        <div class="nav flex-column">
+        <div class="nav flex-column pb-5">
             <a href="#" class="nav-link active" onclick="showView('dashboard')">
-                <i class="fa-solid fa-chart-pie"></i> Dashboard
+                <i class="fa-solid fa-grid-2"></i> Dashboard
             </a>
 
-            <div class="nav-category">Inventory</div>
+            <div class="nav-category">Inventory & Assets</div>
             <div class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between" onclick="toggleSubmenu(this)">
-                    <span><i class="fa-solid fa-boxes-stacked"></i> Products</span>
+                    <span><i class="fa-solid fa-boxes-stacked"></i> Warehousing</span>
                     <i class="fa-solid fa-chevron-down small chevron transition"></i>
                 </a>
                 <div class="submenu">
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('inventory')">Stock Management</a>
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('products')">Product Catalog</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('inventory')">Stock Health</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('products')">Product SKU List</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('transfers')">Inter-hub Moves</a>
                 </div>
             </div>
 
             <div class="nav-category">Logistics</div>
             <div class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between" onclick="toggleSubmenu(this)">
-                    <span><i class="fa-solid fa-truck-fast"></i> Operations</span>
+                    <span><i class="fa-solid fa-truck-ramp-box"></i> Operations</span>
                     <i class="fa-solid fa-chevron-down small chevron transition"></i>
                 </a>
                 <div class="submenu">
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('shipments')">Batch Records</a>
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('transfers')">Inter-hub Moves</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('shipments')">Batch Records</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('shipments')">Inbound Logistics</a>
                 </div>
             </div>
 
             <div class="nav-category">Financials</div>
             <div class="nav-item">
                 <a href="#" class="nav-link d-flex justify-content-between" onclick="toggleSubmenu(this)">
-                    <span><i class="fa-solid fa-file-invoice-dollar"></i> Revenue</span>
+                    <span><i class="fa-solid fa-receipt"></i> Revenue Hub</span>
                     <i class="fa-solid fa-chevron-down small chevron transition"></i>
                 </a>
                 <div class="submenu">
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('sales')">Sales Ledger</a>
-                    <a href="#" class="nav-link py-1 opacity-75" onclick="showView('expenses')">Expense Log</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('sales')">Sales Ledger</a>
+                    <a href="#" class="nav-link py-1 opacity-75 small" onclick="showView('expenses')">Operating Costs</a>
                 </div>
             </div>
 
@@ -202,47 +231,46 @@
                 <i class="fa-solid fa-user-shield"></i> User Directory
             </a>
             <a href="#" class="nav-link" onclick="showView('settings')">
-                <i class="fa-solid fa-sliders"></i> System Config
+                <i class="fa-solid fa-gears"></i> System Config
             </a>
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main Workspace -->
     <div id="main-content">
-        <!-- Top Navbar -->
+        <!-- Top Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 sticky-top">
             <div class="container-fluid">
-                <button class="btn d-lg-none me-2" onclick="toggleMobileSidebar()">
-                    <i class="fa-solid fa-bars"></i>
+                <button class="btn d-lg-none me-3" onclick="toggleMobileSidebar()">
+                    <i class="fa-solid fa-bars-staggered"></i>
                 </button>
-                <h6 id="page-title" class="mb-0 fw-bold text-muted text-uppercase small" style="letter-spacing: 0.1em;">Overview</h6>
+                <div class="d-flex flex-column">
+                    <h6 id="page-title" class="mb-0 fw-bold text-uppercase small text-muted" style="letter-spacing: 0.15em;">Overview</h6>
+                </div>
                 
                 <div class="ms-auto d-flex align-items-center gap-4">
-                    <div class="d-none d-md-flex align-items-center gap-2">
-                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
-                            <i class="fa-solid fa-circle shadow-sm me-1" style="font-size: 0.5rem;"></i> Cloud Synced
-                        </span>
+                    <div id="sync-pill" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 d-none d-md-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle shadow-sm" style="font-size: 0.4rem;"></i> Cloud Active
                     </div>
-                    <div class="vr mx-2"></div>
+                    <div class="vr mx-1 opacity-25"></div>
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none text-dark" data-bs-toggle="dropdown">
-                            <div class="bg-secondary-subtle text-secondary rounded-circle d-flex align-items-center justify-content-center me-2 fw-bold" style="width: 35px; height: 35px;">AD</div>
+                            <div class="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3 fw-bold shadow-sm" style="width: 38px; height: 38px;">AD</div>
                             <div class="d-none d-md-block">
-                                <p class="mb-0 small fw-bold">Administrator</p>
-                                <p class="mb-0 text-muted" style="font-size: 0.7rem;">Nexus HQ</p>
+                                <p class="mb-0 small fw-bold leading-tight">Administrator</p>
+                                <p class="mb-0 text-muted" style="font-size: 0.65rem;">Nexus Global HQ</p>
                             </div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3">
-                            <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-user-gear me-2 opacity-50"></i> Profile</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 p-2 rounded-4">
+                            <li><a class="dropdown-item py-2 rounded-3" href="#"><i class="fa-solid fa-user-gear me-2 opacity-50"></i> Profile Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item py-2 text-danger" href="#"><i class="fa-solid fa-power-off me-2"></i> Log Out</a></li>
+                            <li><a class="dropdown-item py-2 rounded-3 text-danger" href="#"><i class="fa-solid fa-right-from-bracket me-2"></i> Terminate Session</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <!-- Dynamic View Sections -->
         <div class="p-4 p-md-5">
             
             <!-- VIEW: DASHBOARD -->
@@ -252,42 +280,47 @@
                         <div class="card stat-card border-primary">
                             <p class="text-muted small fw-bold mb-1">TOTAL REVENUE</p>
                             <h3 class="fw-bold mb-0" id="stat-revenue">৳0</h3>
+                            <div class="text-success small fw-bold mt-2"><i class="fa-solid fa-arrow-up"></i> +12.4%</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card stat-card border-warning">
-                            <p class="text-muted small fw-bold mb-1">OPERATION COST</p>
+                            <p class="text-muted small fw-bold mb-1">OPERATING COSTS</p>
                             <h3 class="fw-bold mb-0" id="stat-costs">৳0</h3>
+                            <div class="text-muted small fw-bold mt-2">Incl. Logistics</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card stat-card border-success">
                             <p class="text-muted small fw-bold mb-1">NET PROFIT</p>
                             <h3 class="fw-bold mb-0" id="stat-profit">৳0</h3>
+                            <div class="text-success small fw-bold mt-2">Verified Audit</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card stat-card border-info">
                             <p class="text-muted small fw-bold mb-1">ACTIVE BATCHES</p>
                             <h3 class="fw-bold mb-0" id="stat-batches">0</h3>
+                            <div class="text-info small fw-bold mt-2">In Transit</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row g-4">
                     <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header bg-white py-3 border-0">
-                                <h6 class="fw-bold mb-0">High-Level Inventory Health</h6>
+                        <div class="card p-0 overflow-hidden">
+                            <div class="card-header bg-white py-4 px-4 border-0 d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold mb-0"><i class="fa-solid fa-heart-pulse text-danger me-2"></i> Inventory Health Matrix</h6>
+                                <button class="btn btn-sm btn-light border" onclick="showView('inventory')">View Analysis</button>
                             </div>
                             <div class="table-responsive">
                                 <table class="table align-middle mb-0">
-                                    <thead class="bg-light">
-                                        <tr class="small text-muted">
-                                            <th class="ps-4">PRODUCT</th>
-                                            <th class="text-center">AVAILABLE</th>
-                                            <th class="text-center">STATUS</th>
-                                            <th class="pe-4">HEALTH</th>
+                                    <thead>
+                                        <tr>
+                                            <th class="ps-4">Product Variant</th>
+                                            <th class="text-center">Current Stock</th>
+                                            <th class="text-center">Safety Status</th>
+                                            <th class="pe-4">Utilization</th>
                                         </tr>
                                     </thead>
                                     <tbody id="dash-stock-table"></tbody>
@@ -296,11 +329,9 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-header bg-white py-3 border-0">
-                                <h6 class="fw-bold mb-0">System Activity</h6>
-                            </div>
-                            <div class="card-body pt-0" id="activity-stream"></div>
+                        <div class="card p-4 h-100">
+                            <h6 class="fw-bold mb-4"><i class="fa-solid fa-bolt text-warning me-2"></i> Nexus Intelligence</h6>
+                            <div id="activity-stream" class="small"></div>
                         </div>
                     </div>
                 </div>
@@ -309,20 +340,20 @@
             <!-- VIEW: SHIPMENTS -->
             <section id="shipments-view" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Logistics Batches</h4>
-                    <button class="btn btn-primary" onclick="openShipmentModal()">
-                        <i class="fa-solid fa-plus me-2"></i> New Shipment
+                    <h4 class="fw-bold mb-0">Logistics Batch Repository</h4>
+                    <button class="btn btn-nexus" onclick="openShipmentModal()">
+                        <i class="fa-solid fa-plus me-2"></i> New Batch Entry
                     </button>
                 </div>
-                <div class="card p-0 overflow-hidden">
+                <div class="card p-0 overflow-hidden border-0">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr class="small text-muted">
+                        <thead>
+                            <tr>
                                 <th class="ps-4">BATCH REFERENCE</th>
-                                <th>DATE</th>
+                                <th>LOGISTICS DATE</th>
                                 <th>VALUATION</th>
                                 <th>STATUS</th>
-                                <th class="text-end pe-4">ACTIONS</th>
+                                <th class="text-end pe-4">MANAGEMENT</th>
                             </tr>
                         </thead>
                         <tbody id="shipments-table-body"></tbody>
@@ -332,16 +363,16 @@
 
             <!-- VIEW: INVENTORY -->
             <section id="inventory-view" class="view-section">
-                <h4 class="fw-bold mb-4">Master Inventory Matrix</h4>
-                <div class="card">
+                <h4 class="fw-bold mb-4">Master Stock Matrix</h4>
+                <div class="card border-0">
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
-                            <thead class="bg-light">
-                                <tr class="small text-muted">
-                                    <th class="ps-4">PRODUCT NAME</th>
-                                    <th class="text-center">STOCK (KG)</th>
-                                    <th class="text-center">IN TRANSIT</th>
-                                    <th class="pe-4">ALERT LEVEL</th>
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">PRODUCT CATALOG</th>
+                                    <th class="text-center">NET AVAILABLE (KG)</th>
+                                    <th class="text-center">IN-TRANSIT VOLUME</th>
+                                    <th class="pe-4">LOGISTICS ALERT</th>
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body"></tbody>
@@ -350,37 +381,23 @@
                 </div>
             </section>
 
-            <!-- VIEW: TRANSFERS -->
-            <section id="transfers-view" class="view-section">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">Inter-hub Movements</h4>
-                    <button class="btn btn-primary" onclick="alert('Feature logic arriving in next patch...')">
-                        <i class="fa-solid fa-arrows-left-right me-2"></i> Move Stock
-                    </button>
-                </div>
-                <div class="card p-5 text-center bg-light-subtle">
-                    <i class="fa-solid fa-route fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No active stock transfers in progress.</p>
-                </div>
-            </section>
-
             <!-- VIEW: SETTINGS -->
             <section id="settings-view" class="view-section">
-                <h4 class="fw-bold mb-4">Configuration</h4>
+                <h4 class="fw-bold mb-4">System Parameters</h4>
                 <div class="row g-4">
                     <div class="col-md-6">
-                        <div class="card p-4">
-                            <h6 class="fw-bold mb-3">Cloud Integration</h6>
-                            <label class="form-label small text-muted">Apps Script Endpoint</label>
-                            <input type="text" id="api-url" class="form-control mb-3" placeholder="https://script.google.com/...">
-                            <button class="btn btn-primary w-100" onclick="saveConfig()">Save Configuration</button>
+                        <div class="card p-4 border-0">
+                            <h6 class="fw-bold mb-3"><i class="fa-solid fa-cloud-arrow-up text-primary me-2"></i> API Synchronization</h6>
+                            <label class="form-label small text-muted">Apps Script Endpoint URL</label>
+                            <input type="text" id="api-url" class="form-control mb-3 rounded-3" placeholder="https://script.google.com/...">
+                            <button class="btn btn-nexus w-100" onclick="saveConfig()">Update Registry</button>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card p-4">
-                            <h6 class="fw-bold mb-3">Data Management</h6>
-                            <p class="small text-muted">Clear all local storage records. This action is permanent.</p>
-                            <button class="btn btn-outline-danger w-100" onclick="resetApp()">Wipe Local Database</button>
+                        <div class="card p-4 border-0">
+                            <h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Disaster Recovery</h6>
+                            <p class="small text-muted">Factory reset the local database. This action wipes all local cache and records permanently.</p>
+                            <button class="btn btn-outline-danger w-100 rounded-3 fw-bold" onclick="resetApp()">Factory Reset Engine</button>
                         </div>
                     </div>
                 </div>
@@ -389,56 +406,80 @@
         </div>
     </div>
 
-    <!-- MODAL: SHIPMENT FORM -->
+    <!-- MODAL: ADVANCED SHIPMENT FORM -->
     <div class="modal fade" id="shipmentModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">New Batch Record</h5>
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-2xl rounded-5 overflow-hidden">
+                <div class="modal-header border-0 bg-white p-4">
+                    <h5 class="modal-title fw-bold">Provision New Batch Record</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-7">
-                            <label class="form-label small fw-bold">Batch Name</label>
-                            <input type="text" id="ship-name" class="form-control" placeholder="e.g. Ramadan Bulk 2024">
+                <div class="modal-body p-4 bg-light-subtle">
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <div class="card p-4 border-0 shadow-sm">
+                                <h6 class="small fw-bold text-muted mb-3 uppercase tracking-widest">Metadata</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label small fw-bold">Batch Reference</label>
+                                        <input type="text" id="ship-name" class="form-control rounded-3" placeholder="e.g. Saudi Ajwa Bulk Q4">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold">Arrival Date</label>
+                                        <input type="date" id="ship-date" class="form-control rounded-3">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card p-4 border-0 shadow-sm mt-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="small fw-bold text-muted mb-0 uppercase tracking-widest">Product Composition</h6>
+                                    <button class="btn btn-sm btn-link text-primary fw-bold text-decoration-none" onclick="addModalRow()">
+                                        <i class="fa-solid fa-plus-circle"></i> Add Variant
+                                    </button>
+                                </div>
+                                <div id="modal-rows"></div>
+                            </div>
                         </div>
-                        <div class="col-md-5">
-                            <label class="form-label small fw-bold">Arrival Date</label>
-                            <input type="date" id="ship-date" class="form-control">
-                        </div>
-                        <div class="col-12 mt-4">
-                            <h6 class="border-bottom pb-2 fw-bold small">Product Breakdown</h6>
-                            <div id="modal-rows"></div>
-                            <button class="btn btn-link btn-sm text-primary p-0 text-decoration-none fw-bold" onclick="addModalRow()">
-                                <i class="fa-solid fa-plus me-1"></i> Add Product
-                            </button>
+
+                        <div class="col-md-4">
+                            <div class="card p-4 border-0 bg-nexus-dark text-white shadow-lg h-100" style="background: var(--nexus-dark);">
+                                <h6 class="small fw-bold opacity-50 mb-4 uppercase tracking-widest">Batch Summary</h6>
+                                <div class="mb-4">
+                                    <p class="small text-white-50 mb-1">Calculated Valuation</p>
+                                    <h2 class="fw-bold text-primary" id="modal-total-val">৳0</h2>
+                                </div>
+                                <div class="mt-auto">
+                                    <label class="form-label small text-white-50">Logistics Status</label>
+                                    <select id="ship-status" class="form-select bg-dark border-secondary text-white rounded-3 mb-4">
+                                        <option value="Processing">Processing</option>
+                                        <option value="Shipped">In Transit</option>
+                                        <option value="Arrived">Arrived/Completed</option>
+                                    </select>
+                                    <button class="btn btn-primary w-100 py-3 fw-bold rounded-4" onclick="processShipment()">Finalize Records</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light-subtle border-0">
-                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary px-5" onclick="processShipment()">Finalize Record</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Application Engine -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- Core Application Engine ---
+        // --- Core State Engine ---
         let state = {
             shipments: [],
-            sales: [],
             stock: [
-                { name: 'Ajwa Dates', available: 1250, threshold: 500 },
-                { name: 'Safawi Dates', available: 840, threshold: 300 },
-                { name: 'Mabroom Dates', available: 620, threshold: 200 },
-                { name: 'Medjool Large', available: 410, threshold: 400 }
+                { id: '1', name: 'Ajwa Premium', available: 1250, threshold: 500, rate: 850 },
+                { id: '2', name: 'Safawi Organic', available: 840, threshold: 300, rate: 650 },
+                { id: '3', name: 'Mabroom Grade A', available: 620, threshold: 200, rate: 750 },
+                { id: '4', name: 'Medjool Large', available: 410, threshold: 400, rate: 1100 }
             ],
             activities: [
-                { title: 'System Booted', msg: 'Core engine initialized.', time: 'Just now', type: 'system' }
+                { title: 'Nexus Engine Active', msg: 'System initialized and database verified.', time: 'Just now', type: 'system' }
             ],
             apiUrl: ''
         };
@@ -446,7 +487,7 @@
         const modalRowsContainer = document.getElementById('modal-rows');
 
         function init() {
-            const saved = localStorage.getItem('nexus_pro_db_v1');
+            const saved = localStorage.getItem('nexus_enterprise_db_v1');
             if (saved) state = JSON.parse(saved);
             
             document.getElementById('api-url').value = state.apiUrl || '';
@@ -460,14 +501,11 @@
             saveToLocal();
         }
 
-        // --- UI Interactions ---
+        // --- Navigation Controller ---
         function toggleSubmenu(el) {
             const item = el.closest('.nav-item');
             const isExpanded = item.classList.contains('expanded');
-            
-            // Close others
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('expanded'));
-            
             if (!isExpanded) item.classList.add('expanded');
         }
 
@@ -476,20 +514,11 @@
             document.getElementById(viewId + '-view').classList.add('active');
             
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            // Highlight current link (complicated by submenus, so we search by text or logic)
-            
-            const titleMap = {
-                dashboard: 'Overview',
-                inventory: 'Stock Management',
-                products: 'Product Catalog',
-                shipments: 'Batch Records',
-                transfers: 'Logistics Moves',
-                sales: 'Revenue Ledger',
-                expenses: 'Expense Tracking',
-                users: 'Identity Management',
-                settings: 'System Configuration'
+            const titles = {
+                dashboard: 'Overview', inventory: 'Stock Health', shipments: 'Batch Records',
+                sales: 'Revenue Ledger', expenses: 'Operations Costs', users: 'Identity Directory', settings: 'System Registry'
             };
-            document.getElementById('page-title').innerText = titleMap[viewId] || viewId;
+            document.getElementById('page-title').innerText = titles[viewId] || viewId;
             
             if (window.innerWidth <= 992) toggleMobileSidebar();
         }
@@ -498,30 +527,31 @@
             document.getElementById('sidebar').classList.toggle('mobile-active');
         }
 
-        // --- View Renders ---
+        // --- UI Renders ---
         function renderDashboard() {
-            const totalRev = state.shipments.reduce((s, b) => s + b.total, 0);
-            document.getElementById('stat-revenue').innerText = `৳${totalRev.toLocaleString()}`;
+            const totalVal = state.shipments.reduce((s, b) => s + b.total, 0);
+            document.getElementById('stat-revenue').innerText = `৳${totalVal.toLocaleString()}`;
             document.getElementById('stat-batches').innerText = state.shipments.length;
-            document.getElementById('stat-profit').innerText = `৳${(totalRev * 0.4).toLocaleString()}`; // Mock profit calculation
+            document.getElementById('stat-costs').innerText = `৳${(totalVal * 0.15).toLocaleString()}`;
+            document.getElementById('stat-profit').innerText = `৳${(totalVal * 0.85).toLocaleString()}`;
 
-            // Stock Table
+            // Dashboard Stock Table
             const tbody = document.getElementById('dash-stock-table');
             tbody.innerHTML = state.stock.map(item => {
                 const isLow = item.available < item.threshold;
                 const percent = Math.min(100, (item.available / 2000) * 100);
                 return `
                     <tr>
-                        <td class="ps-4 fw-bold text-dark">${item.name}</td>
-                        <td class="text-center font-monospace">${item.available} kg</td>
+                        <td class="ps-4 fw-bold">${item.name}</td>
+                        <td class="text-center font-monospace">${item.available} KG</td>
                         <td class="text-center">
                             <span class="status-badge ${isLow ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}">
-                                ${isLow ? 'Critical' : 'Healthy'}
+                                ${isLow ? 'Critical Level' : 'Verified Healthy'}
                             </span>
                         </td>
-                        <td class="pe-4" style="width: 150px;">
-                            <div class="progress" style="height: 6px;">
-                                <div class="progress-bar ${isLow ? 'bg-danger' : 'bg-success'}" style="width: ${percent}%"></div>
+                        <td class="pe-4">
+                            <div class="progress" style="height: 6px; width: 120px;">
+                                <div class="progress-bar ${isLow ? 'bg-danger' : 'bg-primary'}" style="width: ${percent}%"></div>
                             </div>
                         </td>
                     </tr>
@@ -529,12 +559,12 @@
             }).join('');
 
             // Activities
-            document.getElementById('activity-stream').innerHTML = state.activities.slice(0, 5).map(act => `
+            document.getElementById('activity-stream').innerHTML = state.activities.slice(0, 4).map(act => `
                 <div class="d-flex gap-3 mb-4 border-start border-3 ps-3 border-primary-subtle">
                     <div>
-                        <p class="mb-0 small fw-bold">${act.title}</p>
-                        <p class="mb-0 text-muted" style="font-size: 0.75rem;">${act.msg}</p>
-                        <span class="text-xs text-muted" style="font-size: 0.6rem;">${act.time}</span>
+                        <p class="mb-0 small fw-bold text-dark">${act.title}</p>
+                        <p class="mb-0 text-muted extra-small" style="font-size: 0.7rem;">${act.msg}</p>
+                        <span class="text-muted" style="font-size: 0.6rem;">${act.time}</span>
                     </div>
                 </div>
             `).join('');
@@ -545,16 +575,16 @@
             tbody.innerHTML = state.shipments.length ? state.shipments.map(s => `
                 <tr>
                     <td class="ps-4 fw-bold text-primary">${s.name}</td>
-                    <td>${s.date}</td>
+                    <td class="small text-muted">${s.date}</td>
                     <td class="fw-bold">৳${s.total.toLocaleString()}</td>
-                    <td><span class="status-badge bg-info-subtle text-info">Completed</span></td>
+                    <td><span class="status-badge bg-info-subtle text-info">${s.status}</span></td>
                     <td class="text-end pe-4">
-                        <button class="btn btn-sm btn-light border" onclick="deleteShipment('${s.id}')">
-                            <i class="fa-solid fa-trash text-danger"></i>
+                        <button class="btn btn-sm btn-light border-0" onclick="deleteShipment('${s.id}')">
+                            <i class="fa-solid fa-trash-can text-danger"></i>
                         </button>
                     </td>
                 </tr>
-            `).join('') : `<tr><td colspan="5" class="text-center py-5 text-muted">No records found.</td></tr>`;
+            `).join('') : `<tr><td colspan="5" class="text-center py-5 text-muted small">No logistics records found in repository.</td></tr>`;
         }
 
         function renderInventory() {
@@ -562,73 +592,88 @@
             tbody.innerHTML = state.stock.map(item => `
                 <tr>
                     <td class="ps-4 fw-bold">${item.name}</td>
-                    <td class="text-center">${item.available} kg</td>
-                    <td class="text-center">0 kg</td>
+                    <td class="text-center font-monospace">${item.available} KG</td>
+                    <td class="text-center text-muted">0 KG</td>
                     <td class="pe-4">
                         <span class="status-badge ${item.available < item.threshold ? 'bg-warning-subtle text-warning' : 'bg-light text-muted'}">
-                            ${item.available < item.threshold ? 'Restock Required' : 'Verified'}
+                            ${item.available < item.threshold ? 'REORDER REQUIRED' : 'OPTIMAL'}
                         </span>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // --- Logic Operations ---
+        // --- Business Logic ---
         function openShipmentModal() {
             document.getElementById('ship-name').value = '';
             document.getElementById('ship-date').value = new Date().toISOString().split('T')[0];
             modalRowsContainer.innerHTML = '';
             addModalRow();
             new bootstrap.Modal('#shipmentModal').show();
+            updateModalTotal();
         }
 
         function addModalRow() {
             const div = document.createElement('div');
-            div.className = 'row g-2 mb-2 item-row';
+            div.className = 'row g-2 mb-3 align-items-center item-row';
             div.innerHTML = `
                 <div class="col-7">
-                    <select class="form-select form-select-sm prod-name">
-                        ${state.stock.map(i => `<option>${i.name}</option>`).join('')}
+                    <select class="form-select rounded-3 prod-name" onchange="updateModalTotal()">
+                        ${state.stock.map(i => `<option value="${i.id}">${i.name} (৳${i.rate}/kg)</option>`).join('')}
                     </select>
                 </div>
                 <div class="col-4">
-                    <input type="number" class="form-control form-control-sm prod-qty" placeholder="Quantity">
+                    <input type="number" class="form-control rounded-3 prod-qty" placeholder="KG" oninput="updateModalTotal()">
                 </div>
                 <div class="col-1">
-                    <button class="btn btn-sm text-danger" onclick="this.closest('.row').remove()"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="btn btn-sm text-danger border-0" onclick="this.closest('.row').remove(); updateModalTotal();">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
                 </div>
             `;
             modalRowsContainer.appendChild(div);
         }
 
+        function updateModalTotal() {
+            const rows = document.querySelectorAll('.item-row');
+            let total = 0;
+            rows.forEach(row => {
+                const id = row.querySelector('.prod-name').value;
+                const qty = parseFloat(row.querySelector('.prod-qty').value) || 0;
+                const prod = state.stock.find(s => s.id === id);
+                total += (qty * prod.rate);
+            });
+            document.getElementById('modal-total-val').innerText = `৳${total.toLocaleString()}`;
+        }
+
         function processShipment() {
             const name = document.getElementById('ship-name').value;
             const date = document.getElementById('ship-date').value;
-            if(!name) return alert('Batch name is mandatory');
+            const status = document.getElementById('ship-status').value;
+            if(!name) return alert('Reference name is required for audit.');
 
             const rows = document.querySelectorAll('.item-row');
-            let totalValue = 0;
+            let totalBatchValue = 0;
 
             rows.forEach(row => {
-                const pName = row.querySelector('.prod-name').value;
-                const pQty = parseFloat(row.querySelector('.prod-qty').value) || 0;
-                
-                // Update State Stock
-                const stockItem = state.stock.find(s => s.name === pName);
-                if(stockItem) stockItem.available += pQty;
-                
-                totalValue += (pQty * 850); // Mock unit price
+                const id = row.querySelector('.prod-name').value;
+                const qty = parseFloat(row.querySelector('.prod-qty').value) || 0;
+                const stockItem = state.stock.find(s => s.id === id);
+                if(stockItem) {
+                    stockItem.available += qty;
+                    totalBatchValue += (qty * stockItem.rate);
+                }
             });
 
-            state.shipments.unshift({ id: Date.now().toString(), name, date, total: totalValue });
-            state.activities.unshift({ title: 'Shipment Finalized', msg: `${name} recorded successfully.`, time: 'Just now', type: 'logistics' });
+            state.shipments.unshift({ id: Date.now().toString(), name, date, total: totalBatchValue, status });
+            state.activities.unshift({ title: 'New Batch Logged', msg: `${name} has been provisioned into active stock.`, time: 'Just now', type: 'logistics' });
             
             bootstrap.Modal.getInstance('#shipmentModal').hide();
             renderAll();
         }
 
         function deleteShipment(id) {
-            if(confirm('Delete this record from system?')) {
+            if(confirm('Purge this record from management directory?')) {
                 state.shipments = state.shipments.filter(s => s.id !== id);
                 renderAll();
             }
@@ -637,21 +682,21 @@
         function saveConfig() {
             state.apiUrl = document.getElementById('api-url').value;
             saveToLocal();
-            alert('Cloud endpoint saved.');
+            alert('System registry updated.');
         }
 
         function resetApp() {
-            if(confirm('Wipe all local data?')) {
-                localStorage.removeItem('nexus_pro_db_v1');
+            if(confirm('WARNING: Wipe all management data?')) {
+                localStorage.removeItem('nexus_enterprise_db_v1');
                 location.reload();
             }
         }
 
         function saveToLocal() {
-            localStorage.setItem('nexus_pro_db_v1', JSON.stringify(state));
+            localStorage.setItem('nexus_enterprise_db_v1', JSON.stringify(state));
         }
 
-        // --- Start App ---
+        // Initialize Suite
         init();
     </script>
 </body>
